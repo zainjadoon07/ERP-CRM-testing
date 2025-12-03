@@ -11,7 +11,10 @@
     "production": "NODE_ENV=production",
     "setup": "node src/setup/setup.js",
     "upgrade": "node src/setup/upgrade.js",
-    "reset": "node src/setup/reset.js"
+    "reset": "node src/setup/reset.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.509.0",
@@ -31,7 +34,8 @@
     "lodash": "^4.17.21",
     "module-alias": "^2.2.3",
     "moment": "^2.30.1",
-    "mongoose": "^8.1.1",
+    "mongodb": "^7.0.0",
+    "mongoose": "^8.20.1",
     "mongoose-autopopulate": "^1.1.0",
     "multer": "^1.4.4",
     "node-cache": "^5.1.2",
@@ -42,7 +46,11 @@
     "transliteration": "^2.3.5"
   },
   "devDependencies": {
-    "nodemon": "3.0.1"
+    "@shelf/jest-mongodb": "^6.0.2",
+    "jest": "^30.2.0",
+    "jest-html-reporter": "^4.3.0",
+    "nodemon": "3.0.1",
+    "supertest": "^7.1.4"
   },
   "_moduleAliases": {
     "@": "src"
