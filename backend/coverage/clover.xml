@@ -1,18 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1764790119958" clover="3.2.0">
-  <project timestamp="1764790119958" name="All files">
-    <metrics statements="9" coveredstatements="9" conditionals="4" coveredconditionals="4" methods="1" coveredmethods="1" elements="14" coveredelements="14" complexity="0" loc="9" ncloc="9" packages="1" files="1" classes="1"/>
-    <file name="listAll.js" path="C:\Users\zainu\OneDrive\Desktop\SQE PROJECT\idurar-erp-crm\backend\src\controllers\coreControllers\settingController\listAll.js">
-      <metrics statements="9" coveredstatements="9" conditionals="4" coveredconditionals="4" methods="1" coveredmethods="1"/>
-      <line num="1" count="8" type="stmt"/>
-      <line num="2" count="8" type="stmt"/>
-      <line num="4" count="8" type="stmt"/>
-      <line num="5" count="8" type="cond" truecount="2" falsecount="0"/>
-      <line num="8" count="8" type="stmt"/>
-      <line num="13" count="6" type="cond" truecount="2" falsecount="0"/>
-      <line num="14" count="4" type="stmt"/>
-      <line num="20" count="2" type="stmt"/>
-      <line num="28" count="8" type="stmt"/>
-    </file>
+<coverage generated="1764868434295" clover="3.2.0">
+  <project timestamp="1764868434295" name="All files">
+    <metrics statements="55" coveredstatements="25" conditionals="47" coveredconditionals="4" methods="5" coveredmethods="2" elements="107" coveredelements="31" complexity="0" loc="55" ncloc="55" packages="2" files="2" classes="2"/>
+    <package name="uploadMiddleware">
+      <metrics statements="24" coveredstatements="23" conditionals="5" coveredconditionals="4" methods="3" coveredmethods="2"/>
+      <file name="LocalSingleStorage.js" path="C:\Users\zainu\OneDrive\Desktop\SQE PROJECT\idurar-erp-crm\backend\src\middlewares\uploadMiddleware\LocalSingleStorage.js">
+        <metrics statements="24" coveredstatements="23" conditionals="5" coveredconditionals="4" methods="3" coveredmethods="2"/>
+        <line num="1" count="4" type="stmt"/>
+        <line num="2" count="4" type="stmt"/>
+        <line num="3" count="4" type="stmt"/>
+        <line num="5" count="4" type="stmt"/>
+        <line num="7" count="4" type="stmt"/>
+        <line num="13" count="4" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="18" count="3" type="stmt"/>
+        <line num="20" count="3" type="stmt"/>
+        <line num="21" count="2" type="stmt"/>
+        <line num="23" count="2" type="stmt"/>
+        <line num="24" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="25" count="1" type="stmt"/>
+        <line num="27" count="1" type="stmt"/>
+        <line num="30" count="2" type="stmt"/>
+        <line num="32" count="2" type="stmt"/>
+        <line num="34" count="2" type="stmt"/>
+        <line num="43" count="2" type="stmt"/>
+        <line num="45" count="2" type="stmt"/>
+        <line num="47" count="1" type="stmt"/>
+        <line num="52" count="4" type="stmt"/>
+        <line num="54" count="4" type="stmt"/>
+        <line num="55" count="4" type="stmt"/>
+        <line num="58" count="4" type="stmt"/>
+      </file>
+    </package>
+    <package name="uploadMiddleware.utils">
+      <metrics statements="31" coveredstatements="2" conditionals="42" coveredconditionals="0" methods="2" coveredmethods="0"/>
+      <file name="LocalfileFilter.js" path="C:\Users\zainu\OneDrive\Desktop\SQE PROJECT\idurar-erp-crm\backend\src\middlewares\uploadMiddleware\utils\LocalfileFilter.js">
+        <metrics statements="31" coveredstatements="2" conditionals="42" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <line num="2" count="1" type="cond" truecount="0" falsecount="1"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="25" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="30" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="31" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="34" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="35" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="38" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="39" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="42" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="43" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="46" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="47" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="55" count="0" type="stmt"/>
+        <line num="57" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="58" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="66" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="67" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="72" count="0" type="stmt"/>
+        <line num="76" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="77" count="0" type="stmt"/>
+        <line num="79" count="0" type="stmt"/>
+        <line num="84" count="1" type="stmt"/>
+      </file>
+    </package>
   </project>
 </coverage>
