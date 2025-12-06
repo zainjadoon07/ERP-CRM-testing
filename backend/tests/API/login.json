@@ -1,0 +1,122 @@
+{
+    "info": {
+      "name": "IDURAR Login API",
+      "_postman_id": "b3f2c6f7-1234-5678-9101-abcdef123456",
+      "description": "Collection for testing the Login API",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+      {
+        "name": "Admin Login - Success",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"admin@admin.com\",\n    \"password\": \"admin123\"\n}"
+          },
+          "url": {
+            "raw": "http://localhost:8888/api/login",
+            "protocol": "http",
+            "host": ["localhost"],
+            "port": "8888",
+            "path": ["api", "login"]
+          }
+        },
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "// Save token to environment variable",
+                "if (pm.response.code === 200) {",
+                "    var jsonData = pm.response.json();",
+                "    pm.environment.set(\"authToken\", jsonData.result.token);",
+                "}"
+              ],
+              "type": "text/javascript"
+            }
+          }
+        ],
+        "response": []
+      },
+      {
+        "name": "Login - Wrong Password",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"admin@admin.com\",\n    \"password\": \"wrongpassword\"\n}"
+          },
+          "url": {
+            "raw": "http://localhost:8888/api/login",
+            "protocol": "http",
+            "host": ["localhost"],
+            "port": "8888",
+            "path": ["api", "login"]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Login - Email Not Exist",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"nonexistent@example.com\",\n    \"password\": \"anypassword\"\n}"
+          },
+          "url": {
+            "raw": "http://localhost:8888/api/login",
+            "protocol": "http",
+            "host": ["localhost"],
+            "port": "8888",
+            "path": ["api", "login"]
+          }
+        },
+        "response": []
+      },
+      {
+        "name": "Login - Missing Fields",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n    \"email\": \"admin@admin.com\"\n}"
+          },
+          "url": {
+            "raw": "http://localhost:8888/api/login",
+            "protocol": "http",
+            "host": ["localhost"],
+            "port": "8888",
+            "path": ["api", "login"]
+          }
+        },
+        "response": []
+      }
+    ]
+  }
+  

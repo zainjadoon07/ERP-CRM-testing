@@ -1,0 +1,173 @@
+================================================================================
+                    API ENDPOINTS QUICK REFERENCE
+                    For API Integration Testing
+================================================================================
+
+BASE URL: http://localhost:[PORT]/api (or your server URL)
+AUTH: Most routes require authentication token (except login/forget/reset)
+
+================================================================================
+1. AUTHENTICATION ROUTES (No auth required for login/forget/reset)
+================================================================================
+POST   /api/login
+POST   /api/forgetpassword
+POST   /api/resetpassword
+POST   /api/logout                    [AUTH REQUIRED]
+
+================================================================================
+2. ADMIN ROUTES [AUTH REQUIRED]
+================================================================================
+GET    /api/admin/read/:id
+PATCH  /api/admin/password-update/:id
+
+================================================================================
+3. ADMIN PROFILE ROUTES [AUTH REQUIRED]
+================================================================================
+PATCH  /api/admin/profile/password
+PATCH  /api/admin/profile/update              [FILE UPLOAD]
+
+================================================================================
+4. SETTING ROUTES [AUTH REQUIRED]
+================================================================================
+POST   /api/setting/create
+GET    /api/setting/read/:id
+PATCH  /api/setting/update/:id
+GET    /api/setting/search
+GET    /api/setting/list
+GET    /api/setting/listAll
+GET    /api/setting/filter
+GET    /api/setting/readBySettingKey/:settingKey
+GET    /api/setting/listBySettingKey
+PATCH  /api/setting/updateBySettingKey/:settingKey?
+PATCH  /api/setting/upload/:settingKey?       [FILE UPLOAD]
+PATCH  /api/setting/updateManySetting
+
+================================================================================
+5. CLIENT ROUTES [AUTH REQUIRED]
+================================================================================
+POST   /api/client/create
+GET    /api/client/read/:id
+PATCH  /api/client/update/:id
+DELETE /api/client/delete/:id
+GET    /api/client/search
+GET    /api/client/list
+GET    /api/client/listAll
+GET    /api/client/filter
+GET    /api/client/summary
+
+================================================================================
+6. INVOICE ROUTES [AUTH REQUIRED]
+================================================================================
+POST   /api/invoice/create
+GET    /api/invoice/read/:id
+PATCH  /api/invoice/update/:id
+DELETE /api/invoice/delete/:id
+GET    /api/invoice/search
+GET    /api/invoice/list
+GET    /api/invoice/listAll
+GET    /api/invoice/filter
+GET    /api/invoice/summary
+POST   /api/invoice/mail
+
+================================================================================
+7. QUOTE ROUTES [AUTH REQUIRED]
+================================================================================
+POST   /api/quote/create
+GET    /api/quote/read/:id
+PATCH  /api/quote/update/:id
+DELETE /api/quote/delete/:id
+GET    /api/quote/search
+GET    /api/quote/list
+GET    /api/quote/listAll
+GET    /api/quote/filter
+GET    /api/quote/summary
+POST   /api/quote/mail
+GET    /api/quote/convert/:id
+
+================================================================================
+8. PAYMENT ROUTES [AUTH REQUIRED]
+================================================================================
+POST   /api/payment/create
+GET    /api/payment/read/:id
+PATCH  /api/payment/update/:id
+DELETE /api/payment/delete/:id
+GET    /api/payment/search
+GET    /api/payment/list
+GET    /api/payment/listAll
+GET    /api/payment/filter
+GET    /api/payment/summary
+POST   /api/payment/mail
+
+================================================================================
+9. PAYMENTMODE ROUTES [AUTH REQUIRED]
+================================================================================
+POST   /api/paymentmode/create
+GET    /api/paymentmode/read/:id
+PATCH  /api/paymentmode/update/:id
+DELETE /api/paymentmode/delete/:id
+GET    /api/paymentmode/search
+GET    /api/paymentmode/list
+GET    /api/paymentmode/listAll
+GET    /api/paymentmode/filter
+GET    /api/paymentmode/summary
+
+================================================================================
+10. TAXES ROUTES [AUTH REQUIRED]
+================================================================================
+POST   /api/taxes/create
+GET    /api/taxes/read/:id
+PATCH  /api/taxes/update/:id
+DELETE /api/taxes/delete/:id
+GET    /api/taxes/search
+GET    /api/taxes/list
+GET    /api/taxes/listAll
+GET    /api/taxes/filter
+GET    /api/taxes/summary
+
+================================================================================
+11. DOWNLOAD ROUTES (No auth required)
+================================================================================
+GET    /download/:directory/:file
+       Examples:
+       - /download/invoice/invoice-123.pdf
+       - /download/quote/quote-456.pdf
+       - /download/payment/payment-789.pdf
+
+================================================================================
+12. PUBLIC ROUTES (No auth required)
+================================================================================
+GET    /public/:subPath/:directory/:file
+       Examples:
+       - /public/uploads/admin/photo.png
+       - /public/uploads/setting/company-logo.png
+
+================================================================================
+SUMMARY
+================================================================================
+Total Endpoints: ~100+
+- Authentication: 4
+- Admin: 2
+- Admin Profile: 2
+- Settings: 12
+- Client: 9
+- Invoice: 10
+- Quote: 11
+- Payment: 10
+- PaymentMode: 9
+- Taxes: 9
+- Download: 1 (dynamic)
+- Public: 1 (dynamic)
+
+================================================================================
+TESTING NOTES
+================================================================================
+1. Get auth token: POST /api/login with email/password
+2. Include token in headers: Authorization: Bearer <token>
+   OR as cookie: token=<token>
+3. File uploads: Use multipart/form-data for routes marked [FILE UPLOAD]
+4. Path parameters: Replace :id, :settingKey, :directory, :file with actual values
+5. Query parameters: Add to URL for search, filter, list endpoints
+   Example: /api/client/list?page=1&limit=10
+
+================================================================================
+

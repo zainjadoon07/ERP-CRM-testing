@@ -1,0 +1,439 @@
+{
+  "info": {
+    "name": "IDURAR Quote CRUD API",
+    "_postman_id": "quote-crud-001",
+    "description": "Test Quote CRUD operations: Create, Read, Update, Delete, List, and Convert",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Login - Get Token",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"admin@admin.com\",\n  \"password\": \"admin123\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8888/api/login",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "login"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Login successful', function() {",
+              "    pm.expect(res.success).to.be.true;",
+              "});",
+              "if(res.success) {",
+              "    pm.environment.set('authToken', res.result.token);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create Client (For Quote)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Quote Client {{$timestamp}}\",\n  \"email\": \"quote{{$timestamp}}@client.com\",\n  \"phone\": \"1234567890\",\n  \"country\": \"USA\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8888/api/client/create",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "client",
+            "create"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Status code 200', function() {",
+              "    pm.expect(pm.response.code).to.equal(200);",
+              "});",
+              "if(res.success) {",
+              "    pm.environment.set('clientId', res.result._id);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create Quote",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"client\": \"{{clientId}}\",\n  \"number\": 2001,\n  \"year\": 2023,\n  \"status\": \"draft\",\n  \"date\": \"2023-10-27\",\n  \"expiredDate\": \"2023-11-27\",\n  \"currency\": \"USD\",\n  \"items\": [\n    {\n      \"itemName\": \"Consulting Service\",\n      \"description\": \"Initial consultation\",\n      \"quantity\": 5,\n      \"price\": 100,\n      \"total\": 500\n    }\n  ],\n  \"taxRate\": 10\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8888/api/quote/create",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "quote",
+            "create"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Status code 200', function() {",
+              "    pm.expect(pm.response.code).to.equal(200);",
+              "});",
+              "pm.test('Response success true', function() {",
+              "    pm.expect(res.success).to.be.true;",
+              "});",
+              "if(res.success) {",
+              "    pm.environment.set('quoteId', res.result._id);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Read Quote",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8888/api/quote/read/{{quoteId}}",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "quote",
+            "read",
+            "{{quoteId}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Status code 200', function() {",
+              "    pm.expect(pm.response.code).to.equal(200);",
+              "});",
+              "pm.test('Quote ID matches', function() {",
+              "    pm.expect(res.result._id).to.eql(pm.environment.get('quoteId'));",
+              "});",
+              "pm.test('Total calculated correctly', function() {",
+              "    // 5 * 100 = 500 subtotal. 10% tax = 50. Total = 550",
+              "    pm.expect(res.result.total).to.eql(550);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Update Quote",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"client\": \"{{clientId}}\",\n  \"number\": 2001,\n  \"year\": 2023,\n  \"status\": \"pending\",\n  \"date\": \"2023-10-27\",\n  \"expiredDate\": \"2023-11-27\",\n  \"items\": [\n    {\n      \"itemName\": \"Consulting Service Updated\",\n      \"description\": \"Initial consultation\",\n      \"quantity\": 10,\n      \"price\": 100,\n      \"total\": 1000\n    }\n  ],\n  \"taxRate\": 10\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8888/api/quote/update/{{quoteId}}",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "quote",
+            "update",
+            "{{quoteId}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Status code 200', function() {",
+              "    pm.expect(pm.response.code).to.equal(200);",
+              "});",
+              "pm.test('Response success true', function() {",
+              "    pm.expect(res.success).to.be.true;",
+              "});",
+              "pm.test('Total updated correctly', function() {",
+              "    // 10 * 100 = 1000 subtotal. 10% tax = 100. Total = 1100",
+              "    pm.expect(res.result.total).to.eql(1100);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "List Quotes",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8888/api/quote/list",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "quote",
+            "list"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Status code 200', function() {",
+              "    pm.expect(pm.response.code).to.equal(200);",
+              "});",
+              "pm.test('Result is array', function() {",
+              "    pm.expect(Array.isArray(res.result)).to.be.true;",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Convert Quote to Invoice",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8888/api/quote/convert/{{quoteId}}",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "quote",
+            "convert",
+            "{{quoteId}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Status code 200', function() {",
+              "    pm.expect(pm.response.code).to.equal(200);",
+              "});",
+              "pm.test('Returns Premium Message', function() {",
+              "    pm.expect(res.message).to.include(\"Upgrade to Premium\");",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Delete Quote",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8888/api/quote/delete/{{quoteId}}",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "quote",
+            "delete",
+            "{{quoteId}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Status code 200', function() {",
+              "    pm.expect(pm.response.code).to.equal(200);",
+              "});",
+              "pm.test('Response success true', function() {",
+              "    pm.expect(res.success).to.be.true;",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Delete Client (Cleanup)",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8888/api/client/delete/{{clientId}}",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "client",
+            "delete",
+            "{{clientId}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Status code 200', function() {",
+              "    pm.expect(pm.response.code).to.equal(200);",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

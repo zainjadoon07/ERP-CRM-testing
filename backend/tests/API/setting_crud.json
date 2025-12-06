@@ -1,0 +1,410 @@
+{
+  "info": {
+    "name": "IDURAR Setting CRUD API",
+    "_postman_id": "setting-crud-001",
+    "description": "Test Setting CRUD operations: Create, Read, Update, List, and Special Setting Routes",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Login - Get Token",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"admin@admin.com\",\n  \"password\": \"admin123\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8888/api/login",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "login"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Login successful', function() {",
+              "    pm.expect(res.success).to.be.true;",
+              "});",
+              "if(res.success) {",
+              "    pm.environment.set('authToken', res.result.token);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create Setting",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"settingCategory\": \"test_category\",\n  \"settingKey\": \"test_setting_key_{{$timestamp}}\",\n  \"settingValue\": \"initial_value\",\n  \"valueType\": \"String\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8888/api/setting/create",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "setting",
+            "create"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Status code 200', function() {",
+              "    pm.expect(pm.response.code).to.equal(200);",
+              "});",
+              "pm.test('Response success true', function() {",
+              "    pm.expect(res.success).to.be.true;",
+              "});",
+              "if(res.success) {",
+              "    pm.environment.set('settingId', res.result._id);",
+              "    pm.environment.set('settingKey', res.result.settingKey);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Read Setting by ID",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8888/api/setting/read/{{settingId}}",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "setting",
+            "read",
+            "{{settingId}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Status code 200', function() {",
+              "    pm.expect(pm.response.code).to.equal(200);",
+              "});",
+              "pm.test('Response success true', function() {",
+              "    pm.expect(res.success).to.be.true;",
+              "});",
+              "pm.test('Setting Key matches', function() {",
+              "    pm.expect(res.result.settingKey).to.eql(pm.environment.get('settingKey'));",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Read Setting by Key",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8888/api/setting/readBySettingKey/{{settingKey}}",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "setting",
+            "readBySettingKey",
+            "{{settingKey}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Status code 200', function() {",
+              "    pm.expect(pm.response.code).to.equal(200);",
+              "});",
+              "pm.test('Response success true', function() {",
+              "    pm.expect(res.success).to.be.true;",
+              "});",
+              "pm.test('Setting Value matches', function() {",
+              "    pm.expect(res.result.settingValue).to.eql(\"initial_value\");",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "List Settings by Key Array",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8888/api/setting/listBySettingKey?settingKeyArray={{settingKey}}",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "setting",
+            "listBySettingKey"
+          ],
+          "query": [
+            {
+              "key": "settingKeyArray",
+              "value": "{{settingKey}}"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Status code 200', function() {",
+              "    pm.expect(pm.response.code).to.equal(200);",
+              "});",
+              "pm.test('Response success true', function() {",
+              "    pm.expect(res.success).to.be.true;",
+              "});",
+              "pm.test('Result is array', function() {",
+              "    pm.expect(Array.isArray(res.result)).to.be.true;",
+              "});",
+              "pm.test('Found at least one setting', function() {",
+              "    pm.expect(res.result.length).to.be.at.least(1);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Update Setting by Key",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"settingValue\": \"updated_by_key\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8888/api/setting/updateBySettingKey/{{settingKey}}",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "setting",
+            "updateBySettingKey",
+            "{{settingKey}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Status code 200', function() {",
+              "    pm.expect(pm.response.code).to.equal(200);",
+              "});",
+              "pm.test('Response success true', function() {",
+              "    pm.expect(res.success).to.be.true;",
+              "});",
+              "pm.test('Setting Value updated', function() {",
+              "    pm.expect(res.result.settingValue).to.eql(\"updated_by_key\");",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Update Many Settings",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"settings\": [\n    {\n      \"settingKey\": \"{{settingKey}}\",\n      \"settingValue\": \"bulk_updated_value\"\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8888/api/setting/updateManySetting",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "setting",
+            "updateManySetting"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Status code 200', function() {",
+              "    pm.expect(pm.response.code).to.equal(200);",
+              "});",
+              "pm.test('Response success true', function() {",
+              "    pm.expect(res.success).to.be.true;",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Verify Bulk Update",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8888/api/setting/readBySettingKey/{{settingKey}}",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "setting",
+            "readBySettingKey",
+            "{{settingKey}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Status code 200', function() {",
+              "    pm.expect(pm.response.code).to.equal(200);",
+              "});",
+              "pm.test('Setting Value matches bulk update', function() {",
+              "    pm.expect(res.result.settingValue).to.eql(\"bulk_updated_value\");",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

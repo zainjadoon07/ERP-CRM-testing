@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">59.09% </span>
+                <span class="strong">27.27% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>13/22</span>
+                <span class='fraction'>6/22</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">37.5% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>3/8</span>
+                <span class='fraction'>0/8</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>0/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">59.09% </span>
+                <span class="strong">27.27% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>13/22</span>
+                <span class='fraction'>6/22</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -157,15 +157,15 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -174,12 +174,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -240,17 +240,17 @@ const Invoice = mongoose.model('Invoice');
 &nbsp;
 const { calculate } = require('../../../helpers');
 &nbsp;
-const create = async (req, res) =&gt; {
+const create = <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {
   // Creating a new document in the collection
-  if (req.body.amount === 0) {
-    return res.status(202).json({
+<span class="cstat-no" title="statement not covered" >  if (req.body.amount === 0) {</span>
+<span class="cstat-no" title="statement not covered" >    return res.status(202).json({</span>
       success: false,
       result: null,
       message: `The Minimum Amount couldn't be 0`,
     });
   }
 &nbsp;
-  const currentInvoice = await Invoice.findOne({
+  const currentInvoice = <span class="cstat-no" title="statement not covered" >await Invoice.findOne({</span>
     _id: req.body.invoice,
     removed: false,
   });
@@ -259,12 +259,12 @@ const create = async (req, res) =&gt; {
     total: previousTotal,
     discount: previousDiscount,
     credit: previousCredit,
-  } = currentInvoice;
+  } = <span class="cstat-no" title="statement not covered" >currentInvoice;</span>
 &nbsp;
-  const maxAmount = calculate.sub(calculate.sub(previousTotal, previousDiscount), previousCredit);
+  const maxAmount = <span class="cstat-no" title="statement not covered" >calculate.sub(calculate.sub(previousTotal, previousDiscount), previousCredit);</span>
 &nbsp;
-  <span class="missing-if-branch" title="else path not taken" >E</span>if (req.body.amount &gt; maxAmount) {
-    return res.status(202).json({
+<span class="cstat-no" title="statement not covered" >  if (req.body.amount &gt; maxAmount) {</span>
+<span class="cstat-no" title="statement not covered" >    return res.status(202).json({</span>
       success: false,
       result: null,
       message: `The Max Amount you can add is ${maxAmount}`,
@@ -325,7 +325,7 @@ module.exports = create;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-03T16:42:29.757Z
+                at 2025-12-06T16:02:36.316Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>

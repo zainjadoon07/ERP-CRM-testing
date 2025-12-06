@@ -1,0 +1,66 @@
+name: Staging CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "staging" ]
+  pull_request:
+    branches: [ "staging" ]
+
+jobs:
+  test-and-validate:
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:5.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd mongo
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: backend/package-lock.json
+
+    - name: Install Dependencies
+      working-directory: ./backend
+      run: npm ci
+
+    - name: Create .env file
+      working-directory: ./backend
+      run: |
+        echo "DATABASE=mongodb://localhost:27017/idurar-erp-crm" >> .env
+        echo "JWT_SECRET=test_secret_key" >> .env
+        echo "NODE_ENV=test" >> .env
+        echo "PORT=8888" >> .env
+
+    - name: Run Jest Unit/Integration Tests
+      working-directory: ./backend
+      run: npm test
+
+    - name: Start Backend Server (Background)
+      working-directory: ./backend
+      run: |
+        npm run start &
+        sleep 10 # Wait for server to start
+
+    - name: Run API Integration Tests (Newman)
+      working-directory: ./backend
+      run: npm run test:api
+
+    - name: Run Stress Tests (Artillery)
+      working-directory: ./backend
+      run: npm run test:stress

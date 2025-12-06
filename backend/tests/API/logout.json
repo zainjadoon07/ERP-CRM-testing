@@ -1,0 +1,84 @@
+{
+    "info": {
+      "name": "IDURAR Logout API",
+      "_postman_id": "logout-collection-001",
+      "description": "Logout tests with login first to get token",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+      {
+        "name": "Login - Get Token",
+        "request": {
+          "method": "POST",
+          "header": [
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"email\": \"admin@admin.com\",\n  \"password\": \"admin123\"\n}"
+          },
+          "url": {
+            "raw": "http://localhost:8888/api/login",
+            "protocol": "http",
+            "host": ["localhost"],
+            "port": "8888",
+            "path": ["api", "login"]
+          }
+        },
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "const res = pm.response.json();",
+                "pm.test('Login successful', function() {",
+                "    pm.expect(res.success).to.be.true;",
+                "});",
+                "if(res.success) {",
+                "    pm.environment.set('authToken', res.result.token);",
+                "    pm.environment.set('userId', res.result._id);",
+                "}"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "Logout - Success",
+        "request": {
+          "method": "POST",
+          "header": [
+            { "key": "Content-Type", "value": "application/json" },
+            { "key": "Authorization", "value": "Bearer {{authToken}}" }
+          ],
+          "url": {
+            "raw": "http://localhost:8888/api/logout",
+            "protocol": "http",
+            "host": ["localhost"],
+            "port": "8888",
+            "path": ["api", "logout"]
+          }
+        },
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "const res = pm.response.json();",
+                "pm.test('Logout status 200', function() {",
+                "    pm.expect(pm.response.code).to.equal(200);",
+                "});",
+                "pm.test('Logout success true', function() {",
+                "    pm.expect(res.success).to.be.true;",
+                "});",
+                "pm.test('Logout message correct', function() {",
+                "    pm.expect(res.message).to.eql('Successfully logout');",
+                "});"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+  

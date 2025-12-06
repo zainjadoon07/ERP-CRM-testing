@@ -1,0 +1,348 @@
+{
+  "info": {
+    "name": "IDURAR Client CRUD API",
+    "_postman_id": "client-crud-001",
+    "description": "Test Client CRUD operations: Create, Read, Update, Delete, List",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Login - Get Token",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"admin@admin.com\",\n  \"password\": \"admin123\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8888/api/login",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "login"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Login successful', function() {",
+              "    pm.expect(res.success).to.be.true;",
+              "});",
+              "if(res.success) {",
+              "    pm.environment.set('authToken', res.result.token);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create Client",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Test Client {{$timestamp}}\",\n  \"email\": \"test{{$timestamp}}@client.com\",\n  \"phone\": \"1234567890\",\n  \"country\": \"USA\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8888/api/client/create",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "client",
+            "create"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Status code 200', function() {",
+              "    pm.expect(pm.response.code).to.equal(200);",
+              "});",
+              "pm.test('Response success true', function() {",
+              "    pm.expect(res.success).to.be.true;",
+              "});",
+              "if(res.success) {",
+              "    pm.environment.set('clientId', res.result._id);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Read Client",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8888/api/client/read/{{clientId}}",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "client",
+            "read",
+            "{{clientId}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Status code 200', function() {",
+              "    pm.expect(pm.response.code).to.equal(200);",
+              "});",
+              "pm.test('Response success true', function() {",
+              "    pm.expect(res.success).to.be.true;",
+              "});",
+              "pm.test('Client ID matches', function() {",
+              "    pm.expect(res.result._id).to.eql(pm.environment.get('clientId'));",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Update Client",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Updated Client Name\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8888/api/client/update/{{clientId}}",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "client",
+            "update",
+            "{{clientId}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Status code 200', function() {",
+              "    pm.expect(pm.response.code).to.equal(200);",
+              "});",
+              "pm.test('Response success true', function() {",
+              "    pm.expect(res.success).to.be.true;",
+              "});",
+              "pm.test('Client name updated', function() {",
+              "    pm.expect(res.result.name).to.eql(\"Updated Client Name\");",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "List Clients",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8888/api/client/list",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "client",
+            "list"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Status code 200', function() {",
+              "    pm.expect(pm.response.code).to.equal(200);",
+              "});",
+              "pm.test('Response success true', function() {",
+              "    pm.expect(res.success).to.be.true;",
+              "});",
+              "pm.test('Result is array', function() {",
+              "    pm.expect(Array.isArray(res.result)).to.be.true;",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Delete Client",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8888/api/client/delete/{{clientId}}",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "client",
+            "delete",
+            "{{clientId}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Status code 200', function() {",
+              "    pm.expect(pm.response.code).to.equal(200);",
+              "});",
+              "pm.test('Response success true', function() {",
+              "    pm.expect(res.success).to.be.true;",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Read Client (Verify Deleted)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8888/api/client/read/{{clientId}}",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "client",
+            "read",
+            "{{clientId}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Status code 404', function() {",
+              "    pm.expect(pm.response.code).to.equal(404);",
+              "});",
+              "pm.test('Response success false', function() {",
+              "    pm.expect(res.success).to.be.false;",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

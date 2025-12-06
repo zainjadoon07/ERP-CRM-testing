@@ -1,0 +1,90 @@
+{
+    "info": {
+      "name": "IDURAR Read Admin API",
+      "_postman_id": "read-admin-001",
+      "description": "Read Admin by ID tests with login first to get token and ID",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+      {
+        "name": "Login - Get Token and ID",
+        "request": {
+          "method": "POST",
+          "header": [
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"email\": \"admin@admin.com\",\n  \"password\": \"admin123\"\n}"
+          },
+          "url": {
+            "raw": "http://localhost:8888/api/login",
+            "protocol": "http",
+            "host": ["localhost"],
+            "port": "8888",
+            "path": ["api", "login"]
+          }
+        },
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "const res = pm.response.json();",
+                "pm.test('Login successful', function() {",
+                "    pm.expect(res.success).to.be.true;",
+                "});",
+                "if(res.success) {",
+                "    pm.environment.set('authToken', res.result.token);",
+                "    pm.environment.set('userId', res.result._id);",
+                "    pm.environment.set('userEmail', res.result.email);",
+                "    pm.environment.set('userName', res.result.name);",
+                "    pm.environment.set('userRole', res.result.role);",
+                "}"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "Read Admin - Success",
+        "request": {
+          "method": "GET",
+          "header": [
+            { "key": "Content-Type", "value": "application/json" },
+            { "key": "Authorization", "value": "Bearer {{authToken}}" }
+          ],
+          "url": {
+            "raw": "http://localhost:8888/api/admin/read/{{userId}}",
+            "protocol": "http",
+            "host": ["localhost"],
+            "port": "8888",
+            "path": ["api", "admin", "read", "{{userId}}"]
+          }
+        },
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "exec": [
+                "const res = pm.response.json();",
+                "pm.test('Status code 200', function() {",
+                "    pm.expect(pm.response.code).to.equal(200);",
+                "});",
+                "pm.test('Response success true', function() {",
+                "    pm.expect(res.success).to.be.true;",
+                "});",
+                "pm.test('Returned ID matches login', function() {",
+                "    pm.expect(res.result._id).to.eql(pm.environment.get('userId'));",
+                "});",
+                "pm.test('Returned email matches login', function() {",
+                "    pm.expect(res.result.email).to.eql(pm.environment.get('userEmail'));",
+                "});"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+  

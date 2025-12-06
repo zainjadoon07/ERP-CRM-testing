@@ -1,0 +1,146 @@
+{
+  "info": {
+    "name": "IDURAR Download API",
+    "_postman_id": "download-api-001",
+    "description": "Test Download API endpoints. Creates an Invoice to generate a PDF, then attempts to download it.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Login - Get Token",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"admin@admin.com\",\n  \"password\": \"admin123\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8888/api/login",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "login"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Login successful', function() {",
+              "    pm.expect(res.success).to.be.true;",
+              "});",
+              "if(res.success) {",
+              "    pm.environment.set('authToken', res.result.token);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create Client (For Invoice)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Download Test Client {{$timestamp}}\",\n  \"email\": \"download{{$timestamp}}@client.com\",\n  \"phone\": \"1234567890\",\n  \"country\": \"USA\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8888/api/client/create",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "client",
+            "create"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Status code 200', function() {",
+              "    pm.expect(pm.response.code).to.equal(200);",
+              "});",
+              "if(res.success) {",
+              "    pm.environment.set('clientId', res.result._id);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Delete Client (Cleanup)",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8888/api/client/delete/{{clientId}}",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "client",
+            "delete",
+            "{{clientId}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Status code 200', function() {",
+              "    pm.expect(pm.response.code).to.equal(200);",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

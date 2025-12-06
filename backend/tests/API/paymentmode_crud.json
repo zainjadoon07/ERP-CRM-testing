@@ -1,0 +1,299 @@
+{
+  "info": {
+    "name": "IDURAR PaymentMode CRUD API",
+    "_postman_id": "paymentmode-crud-001",
+    "description": "Test PaymentMode CRUD operations. Note: Delete is forbidden by design.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Login - Get Token",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"admin@admin.com\",\n  \"password\": \"admin123\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8888/api/login",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "login"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Login successful', function() {",
+              "    pm.expect(res.success).to.be.true;",
+              "});",
+              "if(res.success) {",
+              "    pm.environment.set('authToken', res.result.token);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create PaymentMode",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Test Payment Mode {{$timestamp}}\",\n  \"description\": \"Description for test mode\",\n  \"isDefault\": false,\n  \"enabled\": true\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8888/api/paymentmode/create",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "paymentmode",
+            "create"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Status code 200', function() {",
+              "    pm.expect(pm.response.code).to.equal(200);",
+              "});",
+              "pm.test('Response success true', function() {",
+              "    pm.expect(res.success).to.be.true;",
+              "});",
+              "if(res.success) {",
+              "    pm.environment.set('paymentModeId', res.result._id);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Read PaymentMode",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8888/api/paymentmode/read/{{paymentModeId}}",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "paymentmode",
+            "read",
+            "{{paymentModeId}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Status code 200', function() {",
+              "    pm.expect(pm.response.code).to.equal(200);",
+              "});",
+              "pm.test('PaymentMode ID matches', function() {",
+              "    pm.expect(res.result._id).to.eql(pm.environment.get('paymentModeId'));",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Update PaymentMode",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Updated Payment Mode Name\",\n  \"description\": \"Updated Description\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8888/api/paymentmode/update/{{paymentModeId}}",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "paymentmode",
+            "update",
+            "{{paymentModeId}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Status code 200', function() {",
+              "    pm.expect(pm.response.code).to.equal(200);",
+              "});",
+              "pm.test('Response success true', function() {",
+              "    pm.expect(res.success).to.be.true;",
+              "});",
+              "pm.test('Name updated', function() {",
+              "    pm.expect(res.result.name).to.eql(\"Updated Payment Mode Name\");",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "List PaymentModes",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8888/api/paymentmode/list",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "paymentmode",
+            "list"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Status code 200', function() {",
+              "    pm.expect(pm.response.code).to.equal(200);",
+              "});",
+              "pm.test('Result is array', function() {",
+              "    pm.expect(Array.isArray(res.result)).to.be.true;",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Delete PaymentMode (Expect Forbidden)",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{authToken}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8888/api/paymentmode/delete/{{paymentModeId}}",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "api",
+            "paymentmode",
+            "delete",
+            "{{paymentModeId}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Status code 403', function() {",
+              "    pm.expect(pm.response.code).to.equal(403);",
+              "});",
+              "pm.test('Response success false', function() {",
+              "    pm.expect(res.success).to.be.false;",
+              "});",
+              "pm.test('Error message correct', function() {",
+              "    pm.expect(res.message).to.include(\"you can't delete payment mode\");",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

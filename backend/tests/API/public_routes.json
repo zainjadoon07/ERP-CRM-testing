@@ -1,0 +1,116 @@
+{
+  "info": {
+    "name": "IDURAR Public Routes API",
+    "_postman_id": "public-routes-001",
+    "description": "Test Public API endpoints for serving static files.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get Admin Upload File",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8888/public/uploads/admin/idurar-icon-png-80-i1kez.png",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "public",
+            "uploads",
+            "admin",
+            "idurar-icon-png-80-i1kez.png"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code 200', function() {",
+              "    pm.expect(pm.response.code).to.equal(200);",
+              "});",
+              "pm.test('Content-Type is Image', function() {",
+              "    pm.expect(pm.response.headers.get('Content-Type')).to.include('image/png');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get Non-Existent File",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8888/public/uploads/admin/non-existent-file.png",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "public",
+            "uploads",
+            "admin",
+            "non-existent-file.png"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code 404', function() {",
+              "    pm.expect(pm.response.code).to.equal(404);",
+              "});",
+              "const res = pm.response.json();",
+              "pm.test('Error message correct', function() {",
+              "    pm.expect(res.message).to.include('we could not find');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Path Traversal Attempt (Security Test)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8888/public/..%2F/..%2F/app.js",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8888",
+          "path": [
+            "public",
+            "..%2F",
+            "..%2F",
+            "app.js"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code 400 or 404', function() {",
+              "    pm.expect(pm.response.code).to.be.oneOf([400, 404]);",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

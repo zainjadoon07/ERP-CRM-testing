@@ -1,0 +1,226 @@
+config:
+  target: "http://localhost:8888"
+  phases:
+    - duration: 60      # test duration in seconds
+      arrivalRate: 5    # requests per second
+  defaults:
+    headers:
+      Content-Type: "application/json"
+
+scenarios:
+  - name: "Full User Journey"
+    flow:
+      # 1. Login
+      - post:
+          url: "/api/login"
+          json:
+            email: "admin@admin.com"
+            password: "admin123"
+          capture:
+            - json: "$.result.token"
+              as: "authToken"
+            - json: "$.result._id"
+              as: "userId"
+
+      # 2. Admin Read
+      - get:
+          url: "/api/admin/read/{{ userId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+
+      # 3. Client CRUD
+      - post:
+          url: "/api/client/create"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          json:
+            name: "Stress Test Client {{ $randomString() }}"
+            email: "stress{{ $randomString() }}@test.com"
+            phone: "1234567890"
+            country: "USA"
+          capture:
+            - json: "$.result._id"
+              as: "clientId"
+      - get:
+          url: "/api/client/read/{{ clientId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      - get:
+          url: "/api/client/list"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+
+      # 4. Invoice CRUD (Requires Client)
+      - post:
+          url: "/api/invoice/create"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          json:
+            client: "{{ clientId }}"
+            number: 1001
+            year: 2023
+            status: "draft"
+            date: "2023-10-27"
+            expiredDate: "2023-11-27"
+            currency: "USD"
+            items:
+              - itemName: "Stress Test Item"
+                description: "Load testing"
+                quantity: 1
+                price: 100
+                total: 100
+            taxRate: 0
+          capture:
+            - json: "$.result._id"
+              as: "invoiceId"
+      - get:
+          url: "/api/invoice/read/{{ invoiceId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      - get:
+          url: "/api/invoice/list"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+
+      # 5. Quote CRUD (Requires Client)
+      - post:
+          url: "/api/quote/create"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          json:
+            client: "{{ clientId }}"
+            number: 2001
+            year: 2023
+            status: "draft"
+            date: "2023-10-27"
+            expiredDate: "2023-11-27"
+            currency: "USD"
+            items:
+              - itemName: "Stress Test Quote Item"
+                description: "Load testing"
+                quantity: 1
+                price: 100
+                total: 100
+            taxRate: 0
+          capture:
+            - json: "$.result._id"
+              as: "quoteId"
+      - get:
+          url: "/api/quote/read/{{ quoteId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      - get:
+          url: "/api/quote/list"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+
+      # 6. Payment CRUD (Requires Client & Invoice)
+      - post:
+          url: "/api/payment/create"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          json:
+            client: "{{ clientId }}"
+            invoice: "{{ invoiceId }}"
+            number: 3001
+            date: "2023-10-28"
+            amount: 50
+            currency: "USD"
+            description: "Stress Test Payment"
+          capture:
+            - json: "$.result._id"
+              as: "paymentId"
+      - get:
+          url: "/api/payment/read/{{ paymentId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      - get:
+          url: "/api/payment/list"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+
+      # 7. PaymentMode CRUD
+      - post:
+          url: "/api/paymentmode/create"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          json:
+            name: "Stress Mode {{ $randomString() }}"
+            description: "Load testing mode"
+            isDefault: false
+            enabled: true
+          capture:
+            - json: "$.result._id"
+              as: "paymentModeId"
+      - get:
+          url: "/api/paymentmode/read/{{ paymentModeId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      - get:
+          url: "/api/paymentmode/list"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+
+      # 8. Taxes CRUD
+      - post:
+          url: "/api/taxes/create"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          json:
+            taxName: "Stress Tax {{ $randomString() }}"
+            taxValue: 5
+            isDefault: false
+            enabled: true
+          capture:
+            - json: "$.result._id"
+              as: "taxId"
+      - get:
+          url: "/api/taxes/read/{{ taxId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      - get:
+          url: "/api/taxes/list"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+
+      # 9. Settings CRUD
+      - post:
+          url: "/api/setting/create"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          json:
+            settingCategory: "stress_test"
+            settingKey: "stress_key_{{ $randomString() }}"
+            settingValue: "stress_value"
+            valueType: "String"
+            isPrivate: false
+            isCoreSetting: false
+          capture:
+            - json: "$.result._id"
+              as: "settingId"
+      - get:
+          url: "/api/setting/read/{{ settingId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      - get:
+          url: "/api/setting/list"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+
+      # Cleanup (Optional - Deletes might be heavy under load, but good for completeness)
+      - delete:
+          url: "/api/invoice/delete/{{ invoiceId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      - delete:
+          url: "/api/quote/delete/{{ quoteId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      - delete:
+          url: "/api/payment/delete/{{ paymentId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+      - delete:
+          url: "/api/client/delete/{{ clientId }}"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
