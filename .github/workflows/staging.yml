@@ -85,7 +85,7 @@ jobs:
       working-directory: ./backend
       run: |
         npm run start &
-        sleep 10
+        sleep 20
 
     - name: Run API Integration Tests
       working-directory: ./backend
