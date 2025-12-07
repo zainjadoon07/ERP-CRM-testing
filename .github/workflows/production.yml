@@ -108,6 +108,29 @@ jobs:
         sleep 30
         echo "Server should be ready now"
 
+    - name: Install Frontend Dependencies
+      working-directory: ./frontend
+      run: npm ci
+
+    - name: Start Frontend Server
+      working-directory: ./frontend
+      run: |
+        npm run dev &
+        npx wait-on http://localhost:3000 -t 120000
+        echo "Frontend Server Ready"
+
+    - name: Run Cypress E2E Tests
+      working-directory: ./frontend
+      run: npm run cypress:run
+
+    - name: Upload Cypress Screenshots
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: cypress-screenshots-production
+        path: frontend/cypress/screenshots
+        retention-days: 5
+
     - name: Run API Smoke Tests
       working-directory: ./backend
       run: npm run test:api
