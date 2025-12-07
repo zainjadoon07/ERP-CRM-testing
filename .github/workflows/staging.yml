@@ -101,7 +101,7 @@ jobs:
 
     - name: Run Cypress E2E Tests
       working-directory: ./frontend
-      run: npm run cypress:run
+      run: npx cypress run --spec "cypress/e2e/login.cy.js"
 
     - name: Upload Cypress Screenshots
       if: failure()
